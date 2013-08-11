@@ -14,6 +14,9 @@ class User < ActiveRecord::Base
   has_secure_password
   
   before_save { email.downcase! }
+  after_validation do
+    self.errors.messages.delete(:password_digest)
+  end
   
   validates :name,  presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
