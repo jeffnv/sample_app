@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_filter :signed_in_user, only: [:edit, :update, :index]
   before_filter :correct_user,   only: [:edit, :update]
+  before_filter :not_signed_in_user, only: [:new, :create]
   before_filter :admin_user, only: [:destroy]
   
   
@@ -13,9 +14,16 @@ class UsersController < ApplicationController
   end
   
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success] = "User destroyed."
-    redirect_to users_url
+    user_to_delete = User.find(params[:id])
+    if(!user_to_delete.admin?)
+      
+      user_to_delete.destroy
+      flash[:success] = "User destroyed."
+      redirect_to users_url
+    else
+      flash[:error] = "Admins cannot destroy themselves"
+      redirect_to users_url
+    end
   end
   
   def create
@@ -63,6 +71,10 @@ class UsersController < ApplicationController
   
   def admin_user
     redirect_to(root_url) unless current_user.admin?
+  end
+  
+  def not_signed_in_user
+    redirect_to(root_url) if signed_in?
   end
     
 end
