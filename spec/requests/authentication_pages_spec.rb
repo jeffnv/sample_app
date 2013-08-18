@@ -19,6 +19,10 @@ describe "Authentication" do
 
       it { should have_selector('title', text: 'Sign in') }
       it { should have_error_message('Invalid') }
+      it { should_not have_link('Users',    href: users_path) }
+      it { should_not have_link('Profile') }
+      it { should_not have_link('Settings')}
+        
       
       describe "after visiting another page" do
         before{click_link "Home"}
@@ -44,6 +48,8 @@ describe "Authentication" do
     
     describe "for non-signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
+      
+
 
       describe "when attempting to visit a protected page" do
         before do
