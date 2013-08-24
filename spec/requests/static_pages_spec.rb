@@ -18,6 +18,8 @@ describe "Static pages" do
     
     describe "for signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
+      
+      
       before do
         FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
         FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
@@ -30,6 +32,28 @@ describe "Static pages" do
           page.should have_selector("li##{item.id}", text: item.content)
         end
       end
+      
+      it "should have the correct micropost count and pluralization" do
+        should have_content "#{user.microposts.count} microposts" 
+      end
+      
+      describe "pagination" do
+
+        before(:all) { 100.times { FactoryGirl.create(:micropost, user: user, content: Faker::Lorem.sentence(5)) } }
+        after(:all)  { Micropost.delete_all }
+
+        it { should have_selector('div.pagination') }
+
+        it "should list each micropost" do
+          Micropost.paginate(page: 1).each do |post|
+            page.should have_selector('li', content: post.content)
+            
+          end
+        end
+        
+        
+      end
+      
     end
   end
 
