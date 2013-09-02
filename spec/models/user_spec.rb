@@ -225,6 +225,13 @@ describe User do
       its(:followed_users) { should_not include(other_user) }
     end
     
+    describe "and destroying user" do
+      before { other_user.destroy}
+      it { should_not be_following(other_user) }
+      its(:followed_users) { should_not include(other_user) }
+      
+    end
+    
   end
     
 end
